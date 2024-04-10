@@ -237,4 +237,4 @@ $RECYCLE.BIN/
 images
 
 # Ignore jpg files in the test/resources directory
-app/api/test/resources/*.jpg
+app/ai/test/images/*.jpg

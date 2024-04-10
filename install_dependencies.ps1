@@ -15,4 +15,4 @@ conda install paddlepaddle==2.6.1 --channel https://mirrors.tuna.tsinghua.edu.cn
 pip install "paddleocr>=2.0.1"
 conda install fastapi -y
 conda install "uvicorn[standard]" -y
-conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 cpuonly -c pytorch # cpu 버전
+
