@@ -30,7 +30,7 @@ def create_item(item: Item):
 @imageRouter.post("/file")
 async def upload_image(files: List[UploadFile] = File(...)):
     # 파일을 저장할 디렉토리 경로 설정
-    upload_dir = os.path.join(PROJECT_ROOT, "test", "resources")
+    upload_dir = os.path.join(PROJECT_ROOT, "app", "test", "images")
     os.makedirs(upload_dir, exist_ok=True)  # 디렉토리가 없으면 생성
 
     # 업로드된 파일을 저장하고 저장된 파일의 경로를 리스트에 추가
