@@ -6,7 +6,7 @@ import logging
 import logging.config
 
 # 로그 설정 파일을 로드하여 설정 적용
-logging.config.fileConfig('app/api/config/logging_config.ini')
+logging.config.fileConfig('app/config/logging_config.ini')
 
 # 로거 생성
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ def create_item(item: Item):
 @imageRouter.post("/file")
 async def upload_image(files: List[UploadFile] = File(...)):
     # 파일을 저장할 디렉토리 경로 설정
-    upload_dir = os.path.join(PROJECT_ROOT, "test", "resources")
+    upload_dir = os.path.join(PROJECT_ROOT, "app", "test", "images")
     os.makedirs(upload_dir, exist_ok=True)  # 디렉토리가 없으면 생성
 
     # 업로드된 파일을 저장하고 저장된 파일의 경로를 리스트에 추가
