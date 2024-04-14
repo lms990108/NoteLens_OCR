@@ -4,7 +4,7 @@
 <img src="https://github.com/lms990108/NoteLens/assets/103021300/5a6bc04c-1e1d-4504-aa8e-9644f20e7f0b" height="300"/>
 
 
-## 해당 Repostiory는 OCR 모델이 들어있는fastAPI를 관리할 예정
+## 해당 Repostiory는 OCR 모델이 들어있는 fastAPI를 관리할 예정
 
 - 해당 api의 메인로직 
 1. img 입력
