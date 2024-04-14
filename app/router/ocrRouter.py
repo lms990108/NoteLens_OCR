@@ -10,7 +10,7 @@ from ..service.ocrService import OCRService
 ocr_service = OCRService()
 ocrRouter = APIRouter()
 
-@ocrRouter.post("/ocr", response_model=List[str])
+@ocrRouter.post("/", response_model=List[str])
 async def process_image(file: UploadFile = File(...)):
     # 임시 저장할 파일 경로
     temp_file_path = f"temp_{file.filename}"
@@ -26,7 +26,7 @@ async def process_image(file: UploadFile = File(...)):
     # 인식된 텍스트 리스트 반환
     return texts
 
-@ocrRouter.post("/ocr-from-url", response_model=List[str])
+@ocrRouter.post("/url", response_model=List[str])
 async def process_image_from_url(image_url: str):
     try:
         response = requests.get(image_url)
