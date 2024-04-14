@@ -1,5 +1,4 @@
 from paddleocr import PaddleOCR
-from PIL import Image
 
 class OCRService:
     def __init__(self):
@@ -12,6 +11,7 @@ class OCRService:
         # 결과 처리
         extracted_texts = []
         for line in result:
-            for word in line:
-                extracted_texts.append(word[1][0])  # 텍스트 정보만 추출
+            # 각 라인별 텍스트를 한 문장으로 결합
+            line_text = ' '.join([word[1][0] for word in line])
+            extracted_texts.append(line_text)
         return extracted_texts
