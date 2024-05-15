@@ -1,19 +1,11 @@
-# 베이스 이미지 지정
-FROM python:3.8-slim
+# 베이스 이미지를 PaddlePaddle의 공식 이미지로 지정
+FROM paddlepaddle/paddle:2.6.1
 
 # 작업 디렉토리 설정
 WORKDIR /app
 
-# 필수 패키지 설치 및 제거
-RUN apt-get update && apt-get install -y \
-    gcc \
-    python3-dev \
-    && pip install paddlepaddle==2.6.1 -i https://mirror.baidu.com/pypi/simple \
-    && pip install "paddleocr>=2.0.1" fastapi "uvicorn[standard]" \
-    && apt-get remove -y gcc python3-dev \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# 필요한 Python 패키지 설치
+RUN pip install "paddleocr>=2.0.1" fastapi "uvicorn[standard]"
 
 # 현재 디렉토리의 모든 파일을 컨테이너의 /app으로 복사
 COPY . /app
