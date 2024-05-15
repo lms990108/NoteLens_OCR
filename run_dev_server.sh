@@ -15,10 +15,10 @@ if [ $? -ne 0 ]; then
   echo "코드 검사에 실패했습니다. 다시 시도해주세요." >> server.log
   exit 1
 fi
-
+x
 # uvicorn 실행
 echo "** uvicorn 서버 실행 시작 **" >> server.log
-uvicorn main:app --reload >> server.log
+uvicorn main:app --reload --host 0.0.0.0 --port 8000 >> server.log
 echo "** uvicorn 서버 실행 종료 **" >> server.log
 
 # 에러 발생 시 종료
