@@ -33,7 +33,15 @@ async def process_image(file: UploadFile = File(...)):
     return texts
 
 @ocrRouter.post("/ocr-multi", response_model=Dict[str, List[str]])
-async def process_multiimage(files: List[UploadFile] = File(...)):
+async def process_multi_images(files: List[UploadFile] = File(...)):
+    
+    if len(files) == 0:
+        logger.error("No files uploaded")
+        raise HTTPException(status_code=400, detail="No files uploaded")
+    
+    logger.info("Files uploaded")
+    logger.info(files)
+    logger.info(len(files))
     
     result_texts = {}
     
