@@ -1,10 +1,10 @@
-from fastapi import APIRouter, File, UploadFile, HTTPException
+from fastapi import APIRouter, File, UploadFile, HTTPException, status, Response
 import requests
 from typing import List, Dict
 import os
 from io import BytesIO
 
-from ..service.ocrService import OCRService
+from app.service.ocrService import OCRService
 
 # 로깅 설정
 import logging
@@ -16,8 +16,13 @@ logger.setLevel(logging.INFO)
 ocr_service = OCRService()
 ocrRouter = APIRouter()
 
-@ocrRouter.post("/ocr", response_model=List[str])
+@ocrRouter.post("/ocr", response_model=str)
 async def process_image(file: UploadFile = File(...)):
+    
+    if not file:
+        logger.error("No file uploaded")
+        raise HTTPException(status_code=400, detail="No files uploaded")
+    
     # 임시 저장할 파일 경로
     temp_file_path = f"temp_{file.filename}"
     with open(temp_file_path, "wb") as buffer:
@@ -32,38 +37,8 @@ async def process_image(file: UploadFile = File(...)):
     # 인식된 텍스트 리스트 반환
     return texts
 
-@ocrRouter.post("/ocr-multi", response_model=Dict[str, List[str]])
-async def process_multi_images(files: List[UploadFile] = File(...)):
-    
-    if len(files) == 0:
-        logger.error("No files uploaded")
-        raise HTTPException(status_code=400, detail="No files uploaded")
-    
-    logger.info("Files uploaded")
-    logger.info(files)
-    logger.info(len(files))
-    
-    result_texts = {}
-    
-    # files 리스트 순회
-    for file in files:
-        # 임시 저장할 파일 경로
-        temp_file_path = f"temp_{file.filename}"
-        with open(temp_file_path, "wb") as buffer:
-            buffer.write(await file.read())
-        
-        # OCR 실행
-        file_texts = ocr_service.perform_ocr(temp_file_path)
-        result_texts[file.filename] = file_texts
-        os.remove(temp_file_path)
-    
-    logger.info(result_texts)
-    
-    return result_texts
 
-
-
-@ocrRouter.post("/ocr-from-url", response_model=List[str])
+@ocrRouter.post("/ocr-from-url", response_model=str)
 async def process_image_from_url(image_url: str):
     try:
         response = requests.get(image_url)
@@ -82,3 +57,32 @@ async def process_image_from_url(image_url: str):
     os.remove(image_path)
     
     return texts
+
+@ocrRouter.post("/ocr-multi", response_model=Dict[str, str])
+async def process_multi_images(files: List[UploadFile] = File(...)):
+    
+    if not files:
+        logger.error("No files uploaded")
+        raise HTTPException(status_code=400, detail="No files uploaded")
+    
+    logger.info("Files uploaded")
+    
+    result_texts = {}
+    
+    # files 리스트 순회
+    for file in files:
+        # 파일 임시 저장
+        temp_file_path = f"temp_{file.filename}"
+        with open(temp_file_path, "wb") as buffer:
+            buffer.write(await file.read())
+        
+        # OCR 실행 및 결과 저장
+        file_texts = ocr_service.perform_ocr(temp_file_path)
+        result_texts[file.filename] = file_texts
+        
+        # 임시 파일 삭제
+        os.remove(temp_file_path)
+    
+    logger.info(result_texts)
+    
+    return result_texts
