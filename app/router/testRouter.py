@@ -9,3 +9,7 @@ def read_root():
 @testRouter.get("/items/{item_id}")
 def read_item(item_id: int, q: str = None):
     return {"item_id": item_id, "q": q}
+
+@testRouter.get("/health")
+async def health_check():
+    return {"status": "ok"}
