@@ -29,10 +29,14 @@ async def process_image(file: UploadFile = File(...)):
         buffer.write(await file.read())
     
     # OCR 실행
-    texts = ocr_service.perform_ocr(temp_file_path)
-    
-    # 임시 파일 삭제
-    os.remove(temp_file_path)
+    try:
+        texts = ocr_service.perform_ocr(temp_file_path)
+    except Exception as e:
+        logger.error(f"Error occurred: {e}")
+        raise HTTPException(status_code=500, detail="Error occurred during OCR")
+    finally:
+        # 임시 파일 삭제
+        os.remove(temp_file_path)
     
     # 인식된 텍스트 리스트 반환
     return texts
@@ -52,9 +56,13 @@ async def process_image_from_url(image_url: str):
     with open(image_path, 'wb') as image_file:
         image_file.write(image_bytes.read())
 
-    texts = ocr_service.perform_ocr(image_path)
-    
-    os.remove(image_path)
+    try:
+        texts = ocr_service.perform_ocr(image_path)
+    except Exception as e:
+        logger.error(f"Error occurred: {e}")
+        raise HTTPException(status_code=500, detail="Error occurred during OCR")
+    finally:
+        os.remove(image_path)
     
     return texts
 
@@ -77,11 +85,16 @@ async def process_multi_images(files: List[UploadFile] = File(...)):
             buffer.write(await file.read())
         
         # OCR 실행 및 결과 저장
-        file_texts = ocr_service.perform_ocr(temp_file_path)
-        result_texts[file.filename] = file_texts
-        
-        # 임시 파일 삭제
-        os.remove(temp_file_path)
+        try:
+            file_texts = ocr_service.perform_ocr(temp_file_path)
+            if len(file_texts) > 2:
+                result_texts[file.filename] = file_texts
+        except Exception as e:
+            logger.error(f"Error occurred: {e}")
+            # result_texts[file.filename] = "Error occurred during OCR. This file is skipped."
+        finally:
+            # 임시 파일 삭제
+            os.remove(temp_file_path)
     
     logger.info(result_texts)
     
