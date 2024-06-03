@@ -9,9 +9,16 @@ class OCRService:
     def perform_ocr(self, image_path):
         # 이미지에서 텍스트 인식
         result = self.ocr.ocr(image_path, cls=True)
+        
         # 결과 처리
         extracted_texts = []
         for line in result:
             for word in line:
                 extracted_texts.append(word[1][0])  # 텍스트 정보만 추출
-        return extracted_texts
+        
+        # 리스트를 문자열로 변환
+        result_sentence = ""
+        for word in extracted_texts:
+            result_sentence += word + " "
+        
+        return result_sentence
